@@ -59,7 +59,7 @@ mmax = numpy.amax(numpy.amax(v))
 # plot RTI
 
 # pulse canceler RTI
-sif2 = sif[1:count+1, :] - sif[0:count, :]
+sif2 = sif[1:count, :] - sif[0:count-1, :]
 v_ifft = scipy.fftpack.ifft(sif2, zpad, 1)
 v = dbv.dbv(v_ifft[:, 0:zpad/2])
 mmax = numpy.amax(numpy.amax(v))
