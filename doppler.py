@@ -12,7 +12,8 @@ if (len(sys.argv) < 2):
     wav_file = 'exit17.wav' # if no wav specified
 else:
     wav_file = sys.argv[1]  # get wav filename from command line
-(fs, y) = scipy.io.wavfile.read(wav_file)   # Fs = sample rate, Y = sample data
+    
+(fs, y) = scipy.io.wavfile.read(wav_file)   # fs = sample rate, y = sample data
 
 # constants
 c = 3e8 # c = 299792458 (m/s)
@@ -23,7 +24,7 @@ fc = 2.59e9 # center frequency (Hz)
 ns = int(fs * tp)    # number of samples per pulse
 
 # invert samples and normalize to 16 bit
-s = -y[:, 1] / 32768.0  # Y[,1] is actual data channel
+s = -y[:, 1] / 32768.0  # y[,1] is actual data channel
 np = int(round(s.size / ns))   # number of pulses
 
 # reshape for doppler vs time

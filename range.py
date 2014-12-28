@@ -1,4 +1,5 @@
 # TODO: PLOT DATA/COMPLETE PLOTTING (matplotlib)
+import scipy
 import scipy.fftpack
 import scipy.io.wavfile
 import numpy
@@ -11,7 +12,8 @@ if (len(sys.argv) < 2):
     wav_file = 'running_outside_20ms.wav' # if no wav specified
 else:
     wav_file = sys.argv[1]  # get wav filename from command line
-(fs, y) = scipy.io.wavfile.read(wav_file)   # Fs = sample rate, Y = sample data
+    
+(fs, y) = scipy.io.wavfile.read(wav_file)   # fs = sample rate, y = sample data
 
 # constants
 c = 3e8 # c = 299792458 (m/s)
@@ -29,8 +31,8 @@ rr = c / (2 * bw)
 max_range = rr * ns / 2
 
 # invert channels and normalize to 16bit
-trig = -y[:, 0] / 32768.0
-s = -y[:, 1] / 32768.0
+trig = -y[:, 0] / 32768.0   # trigger channel
+s = -y[:, 1] / 32768.0  # data channel
 
 # parse data using trig channel
 count = 0
@@ -38,11 +40,13 @@ thresh = 0
 start = trig > thresh
 sif = numpy.array([])
 time = numpy.array([])
+
 for i in xrange(99, start.size - ns + 1):
     if (start[i] == 1) and (numpy.mean(start[i-11:i]) == 0):
         count += 1
         sif = numpy.append(sif, s[i:i+ns])
         time = numpy.append(time, i * 1 / fs)
+        
 sif = numpy.reshape(sif, (count, ns))
 
 # subtract out average from data
