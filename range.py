@@ -27,8 +27,8 @@ bw = fstop - fstart
 f = numpy.linspace(fstart, fstop, ns/2)
 
 # range resolution
-rr = c / (2 * bw)
-max_range = rr * ns / 2
+rr = c / (2.0 * bw)
+max_range = rr * ns / 2.0
 
 # invert channels and normalize to 16bit
 trig = -y[:, 0] / 32768.0   # trigger channel
@@ -45,7 +45,7 @@ for i in xrange(99, start.size - ns + 1):
     if (start[i] == 1) and (numpy.mean(start[i-11:i]) == 0):
         count += 1
         sif = numpy.append(sif, s[i:i+ns])
-        time = numpy.append(time, i * 1 / fs)
+        time = numpy.append(time, i / fs)
         
 sif = numpy.reshape(sif, (count, ns))
 

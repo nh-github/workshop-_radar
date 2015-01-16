@@ -68,5 +68,46 @@ for i in xrange(0, count_pos):
     sif = numpy.append(sif, q_fft)
     
 sif = numpy.reshape(sif, (count_pos, ns/2))
+sif[numpy.nonzero(numpy.isnan(sif))] = 1e-30    # set NaN values to "zero"
+
+# subtract out mean from each range profile
+for i in xrange(count_pos):
+    sif[i, :] = sif[i, :] - numpy.mean(sif, axis = 0)
+    
+sif_int = sif
+
+# more radar parameters
+fc = (fstop - fstart) / 2.0 + fstart  # center radar freq (Hz)
+cr = bw / tp # chirp rate (Hz/s)
+rs = 0  # distance to cal target (m)
+xa = 0  # beginning of new aperture length (m)
+delta_x = 0.508 # antenna spacing, 2 inches (m)
+l = delta_x * count_pos # aperture length (m)
+xa = numpy.linspace(-l/2.0, l/2.0, count_pos)   # cross range position of radar on aperture l (m)
+ya = rs # apparently very important
+za = 0
+t = numpy.linspace(0, tp, ns/2)
+kr = numpy.linspace(((4.0*numpy.pi/c) * (fc - bw/2.0)), ((4.0*numpy.pi/c) * (fc + bw/2.0)), ns/2)
+
+# apply hanning window to data
+N = int(ns / 2)
+H = numpy.empty(N)
+sif_h = numpy.empty((count_pos, N), dtype = complex)
+for i in xrange(N):
+    H[i] = 0.5 + 0.5*numpy.cos(2.0*numpy.pi*((i+1) - N/2.0)/N)
+    
+for i in xrange(count_pos):
+    sif_h[i, :] = numpy.multiply(sif[i, :], H)
+    
+sif = sif_h
+
+# along track FFT (in the slow time domain)
+zpad = 2048
+szeros = numpy.zeros((zpad, N), dtype = complex)
+index = int(round((zpad - count_pos) / 2.0))
+for i in xrange(N):
+    szeros[index:index+count_pos, i] = sif[:, i]
+
+sif = szeros
 
 # TODO: finish rest of SAR RMA_IFP and plotting

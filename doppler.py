@@ -9,12 +9,13 @@ import dbv
 
 # load input data from wav file
 if (len(sys.argv) < 2):
-    wav_file = 'exit17.wav' # if no wav specified
+    wav_file = 'C:\Users\mut\Desktop\doppler_test.wav' # if no wav specified
+#    wav_file = 'exit17.wav' # if no wav specified
 else:
     wav_file = sys.argv[1]  # get wav filename from command line
     
 (fs, y) = scipy.io.wavfile.read(wav_file)   # fs = sample rate, y = sample data
-
+y_t = numpy.arange(0, len(y)) * (1./fs)
 # constants
 c = 3e8 # c = 299792458 (m/s)
 
@@ -40,14 +41,15 @@ v = dbv.dbv(v_ifft[:, 0:zpad/2])    # log scale of data (dB)
 mmax = numpy.amax(numpy.amax(v))
 
 # velocity range
-delta_f = numpy.linspace(0, fs/2, zpad/2)
+delta_f = numpy.linspace(0, fs/2.0, zpad/2)
 wl = c / fc
-velocity = delta_f * wl / 2
+velocity = delta_f * wl / 2.0
 
 # time range
 time = numpy.linspace(1, tp*np, np)
 
 # plot velocity vs time
 # need to finish plotting properly
-im = mpl.imshow(v - mmax, extent=(0,5,0,5))
+#im = mpl.imshow(v - mmax, extent=(0,5,0,5))
+mpl.plot(y_t, s)
 mpl.show()
